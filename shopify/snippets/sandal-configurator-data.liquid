@@ -1,0 +1,40 @@
+{%- comment -%}
+  Inietta i dati prodotto/varianti + impostazioni per il configuratore.
+  Le "varianti a fasce di prezzo" sono mappate per option1/titolo variante
+  (es. Standard / Plus / Premium): vedi src/pricing.js (PRICING.tiers) e src/cart.js.
+{%- endcomment -%}
+<script type="application/json" id="sandal-configurator-data">
+{
+  "currency": {{ cart.currency.iso_code | json }},
+  "routes": {
+    "cart_add_url": {{ routes.cart_add_url | json }},
+    "cart_url": {{ routes.cart_url | json }}
+  },
+  {%- if section.settings.model_filename != blank -%}
+  "modelUrl": {{ section.settings.model_filename | asset_url | json }},
+  {%- endif -%}
+  "product": {%- if product -%}{
+    "id": {{ product.id | json }},
+    "title": {{ product.title | json }},
+    "url": {{ product.url | json }}
+  }{%- else -%}null{%- endif -%},
+  "variants": [
+    {%- if product -%}
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id | json }},
+          "title": {{ v.title | json }},
+          "option": {{ v.option1 | json }},
+          "price": {{ v.price | json }},
+          "available": {{ v.available | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+  ]
+}
+</script>
+<script>
+  window.SANDAL_CONFIGURATOR_DATA = JSON.parse(
+    document.getElementById('sandal-configurator-data').textContent
+  );
+</script>
