@@ -1,25 +1,34 @@
-import { COLORS, PRICING, UPPER_MODE, PARTS_BY_MODE } from './config.js';
+import { COLORS, PRICING, UPPER_MODE, PART_LABELS, visibleParts, getModel } from './config.js';
 
 const colorById = Object.fromEntries(COLORS.map((c) => [c.id, c]));
 
-// selection: { mode, colors: { [partName]: colorId }, ... }
+// selection: { mode, parts: { [partId]: { model, color } } }
 // Ritorna { base, surcharge, total, breakdown[] } in centesimi.
 export function computePrice(selection) {
   const base = PRICING.basePrice;
   const breakdown = [];
   let surcharge = 0;
 
-  // Sovrapprezzo dei colori "premium", solo sulle parti visibili nella modalità corrente.
-  const visibleParts = PARTS_BY_MODE[selection.mode].map((p) => p.id);
-  for (const partId of visibleParts) {
-    const color = colorById[selection.colors[partId]];
+  for (const partId of visibleParts(selection.mode)) {
+    const sel = selection.parts[partId];
+    if (!sel) continue;
+
+    // Sovrapprezzo del modello.
+    const model = getModel(partId, sel.model);
+    if (model && model.priceDelta > 0) {
+      surcharge += model.priceDelta;
+      breakdown.push({ label: `${PART_LABELS[partId]}: ${model.label}`, amount: model.priceDelta });
+    }
+
+    // Sovrapprezzo del colore "premium".
+    const color = colorById[sel.color];
     if (color && color.priceDelta > 0) {
       surcharge += color.priceDelta;
       breakdown.push({ label: `Colore ${color.label}`, amount: color.priceDelta });
     }
   }
 
-  // Sovrapprezzo tomaia intera.
+  // Sovrapprezzo per la modalità tomaia intera.
   if (selection.mode === UPPER_MODE.WHOLE && PRICING.wholeUpperSurcharge > 0) {
     surcharge += PRICING.wholeUpperSurcharge;
     breakdown.push({ label: 'Tomaia intera', amount: PRICING.wholeUpperSurcharge });

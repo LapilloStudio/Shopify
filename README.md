@@ -10,8 +10,16 @@ Il cliente può:
 3. Personalizzare la **tomaia dietro**
 4. Sostituire entrambe con una **tomaia intera** (pezzo unico)
 
-Il prezzo si aggiorna in tempo reale; i sovrapprezzi sono gestiti tramite **varianti a
-fasce di prezzo** + **line item properties** (l'unica via robusta senza backend).
+**Interfaccia**: prodotto al centro (ruotabile a 360°), barra flottante in basso con le
+sezioni **Tomaia** e **Suola**. Dentro ogni sezione si naviga in profondità:
+`Tomaia → Separata / Intera → Davanti·Dietro (o Intera) → Modello → Colore`.
+La modalità **Intera** esclude le tomaie separate (interruttore). I **colori dipendono dal
+modello** scelto: alcuni modelli speciali hanno un colore unico, gli altri (e la suola)
+mantengono la palette completa. Definizioni in `src/config.js` (`MODELS_BY_PART`, `COLOR_SETS`).
+
+Il prezzo si aggiorna in tempo reale; i sovrapprezzi (modello + colore premium + tomaia
+intera) sono gestiti tramite **varianti a fasce di prezzo** + **line item properties**
+(l'unica via robusta senza backend).
 
 > ⚠️ I modelli 3D non ci sono ancora: il configuratore usa **geometria segnaposto** con
 > una convenzione di nomi (Model Contract). Quando arriveranno i `.glb`, si innestano
@@ -90,6 +98,10 @@ toccare il codice:
   `UpperBack` (tomaia dietro), `UpperWhole` (tomaia intera).
 - **Una material dedicata per ogni parte** ricolorabile (i materiali condivisi vengono
   comunque clonati al caricamento).
+- **Modelli/stili** (categoria "Modello"): convenzione `Nome__idModello`, es.
+  `UpperFront__classic`, `UpperFront__cross`, `UpperWhole__woven`. Gli `idModello` sono
+  quelli in `MODELS_BY_PART` (`src/config.js`). Quando ci saranno i `.glb`, `setModel`
+  mostrerà la mesh corrispondente (ora il "Modello" incide solo su colori ammessi e prezzo).
 - **Orientamento**: lunghezza del piede lungo **Z** (punta verso +Z), suola appoggiata a
   y ≈ 0, scala coerente (~2–2.5 unità lungo Z, come il segnaposto).
 - Carica `sandal.glb` in `assets/` del tema e indica il **nome file** nelle impostazioni
@@ -113,7 +125,11 @@ comportamento del *cart drawer* o al CSS per adattarsi allo stile del nuovo tema
 
 | Cosa | Dove |
 | --- | --- |
-| Colori e prezzi | `src/config.js` (`COLORS`, `PRICING`) |
+| Colori e set di colori | `src/config.js` (`COLORS`, `COLOR_SETS`) |
+| Modelli per parte (e loro colori/prezzo) | `src/config.js` (`MODELS_BY_PART`) |
+| Prezzi base e fasce/varianti | `src/config.js` (`PRICING`) |
 | Geometria segnaposto | `src/model.js` (`buildPlaceholder`) |
+| Navigazione/pannello (barra, drill-down) | `src/ui.js` |
 | Stile del pannello/UI | `src/styles.css` |
+| Inquadratura/luci 3D | `src/scene.js` |
 | Testo/impostazioni sezione | `shopify/sections/sandal-configurator.liquid` |

@@ -15,7 +15,7 @@ export function createScene(canvas) {
   const scene = new THREE.Scene();
 
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  camera.position.set(3.2, 2.0, 3.6);
+  camera.position.set(2.8, 1.7, 3.1);
 
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -23,7 +23,7 @@ export function createScene(canvas) {
   controls.minDistance = 2.5;
   controls.maxDistance = 8;
   controls.maxPolarAngle = Math.PI * 0.52; // evita di andare sotto il piano
-  controls.target.set(0, 0.3, 0);
+  controls.target.set(0, 0.35, 0);
 
   // Luci: hemisphere soft + key con ombra + fill.
   scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 0.9));
