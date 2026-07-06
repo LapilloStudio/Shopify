@@ -36,10 +36,13 @@ export function buildProperties(selection) {
 function findVariantForTier(data, tier) {
   if (!data || !Array.isArray(data.variants) || data.variants.length === 0) return null;
   const want = tier.label.toLowerCase();
-  return (
-    data.variants.find((v) => (v.option || v.title || '').toLowerCase() === want) ||
-    data.variants[0]
+  const exact = data.variants.find((v) => (v.option || v.title || '').toLowerCase() === want);
+  if (exact) return exact;
+  console.warn(
+    `[sandal] Nessuna variante "${tier.label}" sul prodotto: controlla che i valori dell'opzione ` +
+      `combacino con PRICING.tiers (config.js). Uso la prima variante come ripiego.`
   );
+  return data.variants[0];
 }
 
 // Aggiunge al carrello. In Shopify usa /cart/add.js; altrimenti mock (console + payload).
@@ -57,6 +60,18 @@ export async function addToCart(selection) {
 
   const variant = findVariantForTier(data, tier);
   if (!variant) throw new Error('Nessuna variante disponibile per questo prodotto.');
+  if (variant.available === false) {
+    throw new Error(`La configurazione "${tier.label}" non è al momento disponibile.`);
+  }
+
+  // Proprietà nascosta (prefisso "_"): dettaglio macchina-leggibile per il merchant,
+  // non mostrata al cliente nella maggior parte dei temi OS 2.0.
+  properties._configurazione = JSON.stringify({
+    mode: selection.mode,
+    parts: selection.parts,
+    tier: tier.id,
+    totale_calcolato: price.total,
+  });
 
   const addUrl = (data.routes && data.routes.cart_add_url) || '/cart/add.js';
   const res = await fetch(addUrl, {

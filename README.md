@@ -23,7 +23,19 @@ intera) sono gestiti tramite **varianti a fasce di prezzo** + **line item proper
 
 > ⚠️ I modelli 3D non ci sono ancora: il configuratore usa **geometria segnaposto** con
 > una convenzione di nomi (Model Contract). Quando arriveranno i `.glb`, si innestano
-> senza modifiche al codice.
+> senza modifiche al codice. Il segnaposto è già "parlante": suola a silhouette di piede,
+> fascette ad arco e **una geometria diversa per ogni Modello** (incrociata, zeppa,
+> tallone chiuso, intrecciata…), così l'esperienza è valutabile da subito.
+
+**Altre caratteristiche:**
+- Rotazione **360°** con auto-rotazione iniziale (si ferma alla prima interazione)
+- Illuminazione ambiente procedurale (nessun asset esterno) + ombra morbida
+- **Configurazione condivisibile**: lo stato vive nell'URL (`#sc=...`), sopravvive al
+  reload e può essere inviato come link
+- Con il pannello opzioni aperto il prodotto viene **reinquadrato in alto** e resta visibile
+- Rendering in pausa quando il canvas è fuori viewport; cleanup automatico nell'editor tema
+- Accessibilità: navigazione da tastiera con focus preservato, `aria-pressed`, Escape per chiudere
+- Ordine con proprietà nascosta `_configurazione` (JSON macchina-leggibile per il merchant)
 
 ---
 
@@ -33,6 +45,7 @@ intera) sono gestiti tramite **varianti a fasce di prezzo** + **line item proper
 npm install
 npm run dev      # apri http://localhost:5173/dev/  (segnaposto, add-to-cart simulato in console)
 npm run build    # genera shopify/assets/sandal-configurator.js e .css
+npm test         # test della logica (prezzi, config, properties carrello) — richiede Node 20+
 ```
 
 ## Struttura

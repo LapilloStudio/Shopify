@@ -3,6 +3,9 @@ import { createScene } from './scene.js';
 import { createSandal } from './model.js';
 import { createUI } from './ui.js';
 
+// Istanze attive: elemento radice -> { dispose } (per il cleanup nell'editor tema).
+const instances = new Map();
+
 // Monta un'istanza del configuratore su un elemento `.sandal-configurator`.
 async function mount(rootEl) {
   if (rootEl.dataset.scMounted) return;
@@ -25,7 +28,19 @@ async function mount(rootEl) {
   const sandal = await createSandal(sceneApi.scene, { modelUrl });
   sceneApi.resize();
 
-  if (panelEl) createUI(panelEl, sandal, { currency });
+  if (panelEl) {
+    createUI(panelEl, sandal, {
+      currency,
+      onPanelToggle: (open) => sceneApi.setPanelOpen(open),
+    });
+  }
+
+  instances.set(rootEl, {
+    dispose() {
+      sceneApi.dispose();
+      delete rootEl.dataset.scMounted;
+    },
+  });
 }
 
 function init() {
@@ -38,5 +53,13 @@ if (document.readyState === 'loading') {
   init();
 }
 
-// Re-init quando la sezione viene (ri)caricata nell'editor del tema Shopify.
+// Editor tema Shopify: re-init al (ri)caricamento della sezione, cleanup alla rimozione.
 document.addEventListener('shopify:section:load', init);
+document.addEventListener('shopify:section:unload', (e) => {
+  for (const [el, inst] of instances) {
+    if (!document.contains(el) || (e.target && e.target.contains(el))) {
+      inst.dispose();
+      instances.delete(el);
+    }
+  }
+});
