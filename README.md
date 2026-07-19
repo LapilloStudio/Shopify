@@ -86,15 +86,17 @@ shopify/                   # file da copiare nel tema
 
 Aggiorna solo i 4 file del configuratore, senza toccare il resto del tema.
 
+Usiamo `npx` (non serve installare nulla globalmente: niente permessi di sistema, niente `sudo`).
+
 **Setup una tantum:**
 ```bash
-npm install -g @shopify/cli   # o: brew tap shopify/shopify && brew install shopify-cli
-shopify auth login --store=<tuo-negozio>.myshopify.com
-shopify theme list            # segna l'ID del tema (es. "Craft") che vuoi aggiornare
+npx --yes @shopify/cli theme list --store=<tuo-negozio>.myshopify.com
 ```
+Il primo avvio apre il browser per il login, poi stampa la lista dei temi: segna l'**ID** di quello che vuoi aggiornare (es. "Craft").
+
 Poi modifica lo script `deploy` in `package.json` inserendo il tuo store e l'ID del tema:
 ```json
-"deploy": "npm run build && shopify theme push --store=<tuo-negozio>.myshopify.com --theme=<THEME_ID> --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
+"deploy": "npm run build && npx --yes @shopify/cli theme push --store=<tuo-negozio>.myshopify.com --theme=<THEME_ID> --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
 ```
 
 **Da quel momento, ogni aggiornamento è:**
