@@ -14,6 +14,10 @@
       .wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.25rem; }
       h1 { font-size: 1.25rem; margin: 0 0 0.25rem; }
       .note { font-size: 0.85rem; opacity: 0.6; margin: 0 0 1.5rem; }
+      /* Finto stile ".button" del tema, solo per l'anteprima locale (non spedito su Shopify) */
+      .button { display:inline-block; padding:1rem 2.2rem; border:1px solid #1f1f1f; border-radius:6px;
+                background:#1f1f1f; color:#fff; font:inherit; font-size:1.05rem; cursor:pointer; }
+      .button:hover { opacity:0.9; }
     </style>
   </head>
   <body>
@@ -22,13 +26,10 @@
       <p class="note">Geometria segnaposto. L'aggiunta al carrello è simulata (vedi console del browser).</p>
 
       <div class="sandal-configurator-embed">
-        <button type="button" class="sc-launcher" data-sc-open aria-haspopup="dialog">
-          <span class="sc-launcher-icon" aria-hidden="true">◎</span>
-          <span class="sc-launcher-text">
-            <strong>Configura il tuo sandalo</strong>
-            <span>Scegli colori e tomaia in 3D</span>
-          </span>
+        <button type="button" class="button button--primary" data-sc-open aria-haspopup="dialog">
+          Configura il tuo sandalo
         </button>
+        <p class="sc-launcher-sub">Scegli colori e tomaia in 3D</p>
 
         <div class="sc-modal" data-sc-modal hidden role="dialog" aria-modal="true" aria-label="Configura il tuo sandalo">
           <button type="button" class="sc-modal-close" data-sc-close aria-label="Chiudi">&times;</button>

@@ -13,15 +13,13 @@
   finché l'utente non apre davvero il configuratore).
 {%- endcomment -%}
 <div class="sandal-configurator-embed">
-  <button type="button" class="sc-launcher" data-sc-open aria-haspopup="dialog">
-    <span class="sc-launcher-icon" aria-hidden="true">◎</span>
-    <span class="sc-launcher-text">
-      <strong>{{ section.settings.heading | default: 'Configura il tuo sandalo' }}</strong>
-      {%- if section.settings.subheading != blank -%}
-        <span>{{ section.settings.subheading }}</span>
-      {%- endif -%}
-    </span>
+  {%- comment -%} Usa le classi native del tema (.button) così il bottone è identico agli altri del sito. {%- endcomment -%}
+  <button type="button" class="button button--primary" data-sc-open aria-haspopup="dialog">
+    {{ section.settings.heading | default: 'Configura il tuo sandalo' }}
   </button>
+  {%- if section.settings.subheading != blank -%}
+    <p class="sc-launcher-sub">{{ section.settings.subheading }}</p>
+  {%- endif -%}
 
   <div
     class="sc-modal"
