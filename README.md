@@ -10,8 +10,14 @@ Il cliente può:
 3. Personalizzare la **tomaia dietro**
 4. Sostituire entrambe con una **tomaia intera** (pezzo unico)
 
-**Interfaccia**: prodotto al centro (ruotabile a 360°), barra flottante in basso con le
-sezioni **Tomaia** e **Suola**. Dentro ogni sezione si naviga in profondità:
+**Interfaccia**: sulla pagina compare solo un **bottone** ("Configura il tuo sandalo").
+Cliccandolo, il configuratore si apre come **esperienza a schermo intero** (sopra header,
+footer e resto della pagina) — prodotto al centro, ruotabile a 360°, con una barra
+flottante in basso con le sezioni **Tomaia** e **Suola**; una X in alto a destra chiude e
+torna alla pagina. Il 3D viene montato solo al primo click (nessun costo di rendering sulle
+pagine dove il bottone è presente ma non ancora aperto).
+
+Dentro ogni sezione si naviga in profondità:
 `Tomaia → Separata / Intera → Davanti·Dietro (o Intera) → Modello → Colore`.
 La modalità **Intera** esclude le tomaie separate (interruttore). I **colori dipendono dal
 modello** scelto: alcuni modelli speciali hanno un colore unico, gli altri (e la suola)
@@ -30,11 +36,16 @@ intera) sono gestiti tramite **varianti a fasce di prezzo** + **line item proper
 **Altre caratteristiche:**
 - Rotazione **360°** con auto-rotazione iniziale (si ferma alla prima interazione)
 - Illuminazione ambiente procedurale (nessun asset esterno) + ombra morbida
-- **Configurazione condivisibile**: lo stato vive nell'URL (`#sc=...`), sopravvive al
-  reload e può essere inviato come link
+- **Configurazione condivisibile**: lo stato vive nell'URL (`#sc=...`); un link con `#sc=...`
+  riapre automaticamente il configuratore già configurato (anche a modale chiusa di default)
 - Con il pannello opzioni aperto il prodotto viene **reinquadrato in alto** e resta visibile
+- Scroll della pagina bloccato mentre la modale è aperta; focus spostato sulla X all'apertura
+  e restituito al bottone alla chiusura
+- Dopo un **add-to-cart reale** (non l'anteprima mock) la modale si chiude da sola
+- Escape chiude prima l'eventuale popover Tomaia/Suola aperto, poi (se non c'è nulla da
+  chiudere) l'intera modale
 - Rendering in pausa quando il canvas è fuori viewport; cleanup automatico nell'editor tema
-- Accessibilità: navigazione da tastiera con focus preservato, `aria-pressed`, Escape per chiudere
+- Accessibilità: navigazione da tastiera con focus preservato, `aria-pressed`/`aria-modal`, Escape
 - Ordine con proprietà nascosta `_configurazione` (JSON macchina-leggibile per il merchant)
 
 ---
@@ -57,8 +68,8 @@ src/                       # sorgenti (bundle con Vite)
   model.js                 # GLTFLoader + geometria segnaposto (Model Contract)
   pricing.js               # calcolo prezzo + fascia/variante
   cart.js                  # add-to-cart (/cart/add.js) + line item properties
-  ui.js                    # pannello opzioni
-  main.js                  # entry: monta su .sandal-configurator
+  ui.js                    # pannello opzioni (dentro la modale)
+  main.js                  # entry: bottone .sandal-configurator-embed → apre .sc-modal
   styles.css
 dev/index.html             # anteprima standalone (senza Shopify)
 shopify/                   # file da copiare nel tema
@@ -76,8 +87,10 @@ shopify/                   # file da copiare nel tema
    - `shopify/sections/sandal-configurator.liquid` → `sections/`
    - `shopify/snippets/sandal-configurator-data.liquid` → `snippets/`
    - `shopify/assets/sandal-configurator.js` e `.css` → `assets/`
-3. Nel **theme editor**, aggiungi la sezione **"Configuratore Sandalo 3D"** alla pagina.
-4. Imposta il **Prodotto configuratore** e (opzionale) il nome file `.glb`.
+3. Nel **theme editor**, aggiungi la sezione **"Configuratore Sandalo 3D"** alla pagina
+   (compare come un bottone; il configuratore si apre a schermo intero al click).
+4. Imposta il **Prodotto configuratore** e (opzionale) il nome file `.glb`. Titolo e
+   sottotitolo del bottone sono personalizzabili dalle impostazioni della sezione.
 
 Sviluppo in locale sul tema: `shopify theme dev` (Shopify CLI).
 

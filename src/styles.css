@@ -1,3 +1,90 @@
+/* ---- Launcher: bottone che apre l'esperienza a schermo intero ---- */
+.sandal-configurator-embed {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1.25rem;
+}
+.sc-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.35rem;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+.sc-launcher:hover {
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+.sc-launcher-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.sc-launcher-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.sc-launcher-text strong {
+  font-size: 1rem;
+}
+.sc-launcher-text span {
+  font-size: 0.82rem;
+  opacity: 0.65;
+}
+
+/* ---- Modale a schermo intero: sopra header/footer/resto della pagina ---- */
+.sc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at 50% 32%, #f7f5f1 0%, #e7e3da 100%);
+}
+.sc-modal[hidden] {
+  display: none;
+}
+.sc-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
+  font: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.sc-modal-close:hover {
+  background: #fff;
+}
+.sc-modal .sandal-configurator {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Blocca lo scroll della pagina sotto mentre la modale è aperta. */
+html.sc-modal-open,
+html.sc-modal-open body {
+  overflow: hidden;
+  height: 100%;
+}
+
 /* ---- Stage: prodotto al centro, pannello flottante in basso ---- */
 .sandal-configurator {
   position: relative;

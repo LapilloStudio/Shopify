@@ -20,9 +20,23 @@
     <div class="wrap">
       <h1>Configuratore 3D Sandalo — Anteprima sviluppo</h1>
       <p class="note">Geometria segnaposto. L'aggiunta al carrello è simulata (vedi console del browser).</p>
-      <div class="sandal-configurator">
-        <div data-sc-canvas></div>
-        <div data-sc-panel></div>
+
+      <div class="sandal-configurator-embed">
+        <button type="button" class="sc-launcher" data-sc-open aria-haspopup="dialog">
+          <span class="sc-launcher-icon" aria-hidden="true">◎</span>
+          <span class="sc-launcher-text">
+            <strong>Configura il tuo sandalo</strong>
+            <span>Scegli colori e tomaia in 3D</span>
+          </span>
+        </button>
+
+        <div class="sc-modal" data-sc-modal hidden role="dialog" aria-modal="true" aria-label="Configura il tuo sandalo">
+          <button type="button" class="sc-modal-close" data-sc-close aria-label="Chiudi">&times;</button>
+          <div class="sandal-configurator">
+            <div data-sc-canvas></div>
+            <div data-sc-panel></div>
+          </div>
+        </div>
       </div>
     </div>
     <script type="module" src="/src/main.js"></script>

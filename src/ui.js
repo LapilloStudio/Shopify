@@ -18,7 +18,8 @@ const colorById = Object.fromEntries(COLORS.map((c) => [c.id, c]));
 
 // Costruisce la barra in basso + il pannello drill-down, mantiene lo stato e lo applica al 3D.
 // onPanelToggle(open) viene chiamato quando il pannello opzioni si apre/chiude.
-export function createUI(root, sandal, { currency = 'EUR', onPanelToggle } = {}) {
+// onAdded() viene chiamato dopo un add-to-cart reale riuscito (non l'anteprima mock).
+export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdded } = {}) {
   const state = {
     mode: DEFAULT_MODE,
     parts: deepClone(DEFAULT_PARTS), // { [partId]: { model, color } }
@@ -117,9 +118,11 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle } = {})
     render();
     try {
       const res = await addToCart(selection());
-      state.addStatus = res && res.mock
+      const isMock = res && res.mock;
+      state.addStatus = isMock
         ? 'Aggiunto (anteprima) — payload nella console.'
         : 'Aggiunto al carrello!';
+      if (!isMock && onAdded) onAdded();
     } catch (err) {
       state.addStatus = 'Errore: ' + err.message;
     }
@@ -150,6 +153,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle } = {})
   // Escape chiude il pannello aperto.
   root.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && state.activeSection) {
+      e.stopPropagation(); // non lasciare che l'Escape chiuda anche la modale a schermo intero
       state.activeSection = null;
       notifyPanel();
       render();
