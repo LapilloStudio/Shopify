@@ -82,17 +82,42 @@ shopify/                   # file da copiare nel tema
 
 ## Installazione nel tema
 
+### Opzione A — Shopify CLI (consigliata, un comando per ogni aggiornamento)
+
+Aggiorna solo i 4 file del configuratore, senza toccare il resto del tema.
+
+**Setup una tantum:**
+```bash
+npm install -g @shopify/cli   # o: brew tap shopify/shopify && brew install shopify-cli
+shopify auth login --store=<tuo-negozio>.myshopify.com
+shopify theme list            # segna l'ID del tema (es. "Craft") che vuoi aggiornare
+```
+Poi modifica lo script `deploy` in `package.json` inserendo il tuo store e l'ID del tema:
+```json
+"deploy": "npm run build && shopify theme push --store=<tuo-negozio>.myshopify.com --theme=<THEME_ID> --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
+```
+
+**Da quel momento, ogni aggiornamento è:**
+```bash
+npm run deploy
+```
+
+### Opzione B — copia manuale (admin → Modifica codice)
+
 1. `npm run build` (genera `shopify/assets/sandal-configurator.js` e `.css`).
-2. Copia nel tuo tema (es. via Shopify CLI o admin → Modifica codice):
+2. Copia nel tuo tema, sovrascrivendo il contenuto dei file esistenti (o creandoli se non esistono):
    - `shopify/sections/sandal-configurator.liquid` → `sections/`
    - `shopify/snippets/sandal-configurator-data.liquid` → `snippets/`
    - `shopify/assets/sandal-configurator.js` e `.css` → `assets/`
-3. Nel **theme editor**, aggiungi la sezione **"Configuratore Sandalo 3D"** alla pagina
-   (compare come un bottone; il configuratore si apre a schermo intero al click).
-4. Imposta il **Prodotto configuratore** e (opzionale) il nome file `.glb`. Titolo e
-   sottotitolo del bottone sono personalizzabili dalle impostazioni della sezione.
 
-Sviluppo in locale sul tema: `shopify theme dev` (Shopify CLI).
+### Dopo l'installazione (entrambe le opzioni)
+
+Nel **theme editor**, aggiungi la sezione **"Configuratore Sandalo 3D"** alla pagina
+(compare come un bottone; il configuratore si apre a schermo intero al click). Imposta il
+**Prodotto configuratore** e (opzionale) il nome file `.glb`. Titolo e sottotitolo del
+bottone sono personalizzabili dalle impostazioni della sezione.
+
+Sviluppo in locale sul tema (anteprima live senza pubblicare): `shopify theme dev`.
 
 ---
 
