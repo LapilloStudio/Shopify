@@ -36,12 +36,35 @@ export function createScene(canvas) {
   // alta dello stage e resta visibile mentre si cambiano le opzioni.
   let targetY = 0.05;
 
-  // Rotazione automatica finché l'utente non interagisce.
+  // Rotazione automatica: attiva all'avvio, si ferma mentre l'utente trascina e
+  // riparte piano dopo che rilascia (breve pausa + velocità che sale gradualmente).
+  const AUTOROTATE_SPEED = 1.0; // velocità a regime
+  const RESUME_DELAY = 1200; // ms di inattività prima di ricominciare
+  const RESUME_RAMP = AUTOROTATE_SPEED / 90; // ~1.5s per tornare a regime (60fps)
+  let resumeAt = null; // timestamp a cui ripartire, o null
+
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.0;
+  controls.autoRotateSpeed = AUTOROTATE_SPEED;
   controls.addEventListener('start', () => {
     controls.autoRotate = false;
+    resumeAt = null; // l'utente ha ripreso in mano: annulla la ripresa in attesa
   });
+  controls.addEventListener('end', () => {
+    resumeAt = performance.now() + RESUME_DELAY; // programma la ripresa graduale
+  });
+
+  function updateAutoRotate() {
+    if (resumeAt === null || performance.now() < resumeAt) return;
+    if (!controls.autoRotate) {
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0; // riparte da fermo e accelera piano
+    }
+    if (controls.autoRotateSpeed < AUTOROTATE_SPEED) {
+      controls.autoRotateSpeed = Math.min(AUTOROTATE_SPEED, controls.autoRotateSpeed + RESUME_RAMP);
+    } else {
+      resumeAt = null; // ripresa completata
+    }
+  }
 
   // Luci: l'environment dà l'ambiente; key light direzionale per l'ombra.
   scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 0.35));
@@ -102,6 +125,7 @@ export function createScene(canvas) {
     if (!running) return;
     requestAnimationFrame(animate);
     if (!inView) return;
+    updateAutoRotate();
     controls.target.y += (targetY - controls.target.y) * 0.08; // reframe morbido
     controls.update();
     renderer.render(scene, camera);
