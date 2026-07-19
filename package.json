@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test",
-    "deploy": "npm run build && npx --yes @shopify/cli theme push --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
+    "deploy": "npm run build && npx --yes @shopify/cli theme push --store=jqdvqf-bj.myshopify.com --theme=201427648860 --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
   },
   "dependencies": {
     "three": "^0.160.0"

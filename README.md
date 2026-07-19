@@ -94,10 +94,9 @@ npx --yes @shopify/cli theme list --store=<tuo-negozio>.myshopify.com
 ```
 Il primo avvio apre il browser per il login, poi stampa la lista dei temi: segna l'**ID** di quello che vuoi aggiornare (es. "Craft").
 
-Poi modifica lo script `deploy` in `package.json` inserendo il tuo store e l'ID del tema:
-```json
-"deploy": "npm run build && npx --yes @shopify/cli theme push --store=<tuo-negozio>.myshopify.com --theme=<THEME_ID> --path=shopify --only sections/sandal-configurator.liquid --only snippets/sandal-configurator-data.liquid --only assets/sandal-configurator.js --only assets/sandal-configurator.css"
-```
+Lo script `deploy` in `package.json` è già configurato con store e tema (Craft) di
+questo progetto. Se in futuro cambi tema o store, aggiorna i flag `--store` e `--theme`
+con i valori di `theme list`.
 
 **Da quel momento, ogni aggiornamento è:**
 ```bash
