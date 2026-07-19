@@ -98,8 +98,13 @@ html.sc-modal-open body {
   left: 50%;
   bottom: 24px;
   transform: translateX(-50%);
-  width: min(940px, calc(100% - 32px));
+  width: min(960px, calc(100% - 32px));
   z-index: 2;
+  /* Unità base della UI: cresce con la larghezza dello schermo.
+     Tutte le misure interne sono in em rispetto a questa. */
+  --sc-ui: clamp(15px, 0.7vw + 10px, 24px);
+  font-size: var(--sc-ui);
+  line-height: 1.3;
 }
 
 .sc-bar {
@@ -107,27 +112,27 @@ html.sc-modal-open body {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.5em;
   background: rgba(255, 255, 255, 0.85);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 14px;
+  border-radius: 0.7em;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  padding: 0.55rem 0.6rem 0.55rem 0.7rem;
+  padding: 0.3em 0.35em 0.3em 0.55em;
 }
 .sc-sections {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.25em;
 }
 .sc-section {
   border: none;
   background: transparent;
   color: inherit;
-  padding: 0.75rem 1.2rem;
-  border-radius: var(--buttons-radius, 10px);
+  padding: 0.5em 0.95em;
+  border-radius: var(--buttons-radius, 0.5em);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1em;
   font-weight: 500;
 }
 .sc-section:hover {
@@ -140,21 +145,21 @@ html.sc-modal-open body {
 .sc-checkout {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.6em;
 }
 .sc-price {
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1.2em;
   white-space: nowrap;
 }
 .sc-add {
   border: none;
   background: #1f1f1f;
   color: #fff;
-  padding: 0.8rem 1.4rem;
-  border-radius: var(--buttons-radius, 10px);
+  padding: 0.6em 1.1em;
+  border-radius: var(--buttons-radius, 0.5em);
   cursor: pointer;
-  font-size: 0.98rem;
+  font-size: 1em;
   white-space: nowrap;
 }
 .sc-add:hover {
@@ -167,11 +172,11 @@ html.sc-modal-open body {
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 14px;
+  border-radius: 0.7em;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
-  padding: 1rem 1.15rem 1.2rem;
-  margin-bottom: 10px;
-  max-height: 44vh;
+  padding: 1em 1.15em 1.2em;
+  margin-bottom: 0.5em;
+  max-height: 58vh;
   overflow-y: auto;
   animation: sc-pop 0.18s ease;
 }
@@ -189,16 +194,16 @@ html.sc-modal-open body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.8em;
 }
 .sc-pop-head strong {
-  font-size: 1rem;
+  font-size: 1.2em;
 }
 .sc-close {
   border: none;
   background: transparent;
   color: inherit;
-  font-size: 1.4rem;
+  font-size: 1.6em;
   line-height: 1;
   cursor: pointer;
   opacity: 0.55;
@@ -211,17 +216,17 @@ html.sc-modal-open body {
   display: inline-flex;
   background: rgba(0, 0, 0, 0.06);
   border-radius: 999px;
-  padding: 3px;
-  margin-bottom: 0.85rem;
+  padding: 0.18em;
+  margin-bottom: 0.85em;
 }
 .sc-toggle-btn {
   border: none;
   background: transparent;
   color: inherit;
-  padding: 0.6rem 1.2rem;
+  padding: 0.5em 1.1em;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.95em;
 }
 .sc-toggle-btn.is-active {
   background: #fff;
@@ -232,22 +237,23 @@ html.sc-modal-open body {
 .sc-parts,
 .sc-cats {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.45em;
+  margin-bottom: 0.85em;
 }
 .sc-cats {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
-  padding-top: 0.85rem;
+  padding-top: 0.85em;
 }
 .sc-part,
 .sc-cat {
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
   color: inherit;
-  padding: 0.55rem 1.05rem;
+  padding: 0.45em 0.95em;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 0.92rem;
+  font-size: 0.92em;
 }
 .sc-part:hover,
 .sc-cat:hover {
@@ -261,24 +267,24 @@ html.sc-modal-open body {
 }
 
 .sc-options {
-  min-height: 54px;
+  min-height: 2.6em;
 }
 .sc-models {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.5em;
 }
 .sc-model {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5em;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: transparent;
   color: inherit;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--buttons-radius, 10px);
+  padding: 0.55em 0.8em;
+  border-radius: var(--buttons-radius, 0.5em);
   cursor: pointer;
-  font-size: 0.92rem;
+  font-size: 0.92em;
 }
 .sc-model:hover {
   border-color: rgba(0, 0, 0, 0.4);
@@ -288,14 +294,15 @@ html.sc-modal-open body {
   box-shadow: inset 0 0 0 1px #1f1f1f;
 }
 .sc-model-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: 1.25em;
+  height: 1.25em;
+  border-radius: 0.3em;
   background: var(--sc-color, #ccc);
   border: 1px solid rgba(0, 0, 0, 0.12);
+  flex: none;
 }
 .sc-badge {
-  font-size: 0.75rem;
+  font-size: 0.72em;
   opacity: 0.65;
 }
 
@@ -303,11 +310,11 @@ html.sc-modal-open body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5em;
 }
 .sc-swatch {
-  width: 42px;
-  height: 42px;
+  width: 2em;
+  height: 2em;
   padding: 0;
   border-radius: 50%;
   cursor: pointer;
@@ -322,22 +329,22 @@ html.sc-modal-open body {
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1f1f1f;
 }
 .sc-fixed {
-  font-size: 0.8rem;
+  font-size: 0.82em;
   opacity: 0.6;
 }
 
 .sc-pop-breakdown {
   list-style: none;
-  margin: 0.9rem 0 0;
-  padding: 0.7rem 0 0;
+  margin: 0.9em 0 0;
+  padding: 0.7em 0 0;
   border-top: 1px dashed rgba(0, 0, 0, 0.12);
-  font-size: 0.8rem;
+  font-size: 0.82em;
   opacity: 0.75;
 }
 .sc-pop-breakdown li {
   display: flex;
   justify-content: space-between;
-  padding: 0.1rem 0;
+  padding: 0.1em 0;
 }
 
 /* Navigazione da tastiera */
@@ -352,8 +359,8 @@ html.sc-modal-open body {
 
 .sc-status {
   text-align: center;
-  font-size: 0.82rem;
-  margin: 0.5rem 0 0;
+  font-size: 0.85em;
+  margin: 0.5em 0 0;
   opacity: 0.85;
 }
 
@@ -364,55 +371,5 @@ html.sc-modal-open body {
   .sc-checkout {
     width: 100%;
     justify-content: space-between;
-  }
-}
-
-/* Schermi grandi (desktop): la modale è a tutto schermo, quindi controlli e testo
-   più generosi per non sembrare persi nello spazio. */
-@media (min-width: 900px) {
-  .sc-bar {
-    padding: 0.7rem 0.8rem 0.7rem 1rem;
-  }
-  .sc-section {
-    font-size: 1.1rem;
-    padding: 0.85rem 1.5rem;
-  }
-  .sc-price {
-    font-size: 1.3rem;
-  }
-  .sc-add {
-    font-size: 1.08rem;
-    padding: 0.95rem 1.8rem;
-  }
-  .sc-popover {
-    padding: 1.4rem 1.6rem 1.5rem;
-    max-height: 50vh;
-  }
-  .sc-pop-head strong {
-    font-size: 1.25rem;
-  }
-  .sc-toggle-btn {
-    font-size: 1.02rem;
-    padding: 0.65rem 1.5rem;
-  }
-  .sc-part,
-  .sc-cat {
-    font-size: 1rem;
-    padding: 0.62rem 1.25rem;
-  }
-  .sc-model {
-    font-size: 1rem;
-    padding: 0.72rem 1.15rem;
-  }
-  .sc-model-thumb {
-    width: 24px;
-    height: 24px;
-  }
-  .sc-swatch {
-    width: 48px;
-    height: 48px;
-  }
-  .sc-launcher-sub {
-    font-size: 1rem;
   }
 }
