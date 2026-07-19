@@ -7,8 +7,16 @@
   overflow: hidden;
   border-radius: 16px;
   font-family: inherit;
+  font-size: 1rem; /* base per gli em/rem interni: segue la taglia testo del tema */
   color: #1f1f1f;
   background: radial-gradient(circle at 50% 32%, #f7f5f1 0%, #e7e3da 100%);
+}
+
+/* I controlli (button/input) NON ereditano il font per default del browser:
+   senza questa regola restano nel font di sistema invece che nel font del tema. */
+.sandal-configurator button {
+  font: inherit;
+  color: inherit;
 }
 .sandal-configurator [data-sc-canvas] {
   position: absolute;
