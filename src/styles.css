@@ -100,11 +100,12 @@ html.sc-modal-open body {
   background: radial-gradient(circle at 50% 32%, #f7f5f1 0%, #e7e3da 100%);
 }
 
-/* I controlli (button/input) NON ereditano il font per default del browser:
-   senza questa regola restano nel font di sistema invece che nel font del tema. */
+/* I controlli (button) NON ereditano il font per default del browser: senza questa
+   regola restano nel font di sistema invece che nel font del tema.
+   NB: qui NON impostiamo `color: inherit`, perché avrebbe specificità maggiore di
+   `.sc-add { color:#fff }` e renderebbe invisibile il testo del bottone scuro. */
 .sandal-configurator button {
   font: inherit;
-  color: inherit;
 }
 .sandal-configurator [data-sc-canvas] {
   position: absolute;
@@ -121,9 +122,9 @@ html.sc-modal-open body {
 .sandal-configurator [data-sc-panel] {
   position: absolute;
   left: 50%;
-  bottom: 18px;
+  bottom: 24px;
   transform: translateX(-50%);
-  width: min(700px, calc(100% - 28px));
+  width: min(940px, calc(100% - 32px));
   z-index: 2;
 }
 
@@ -389,5 +390,61 @@ html.sc-modal-open body {
   .sc-checkout {
     width: 100%;
     justify-content: space-between;
+  }
+}
+
+/* Schermi grandi (desktop): la modale è a tutto schermo, quindi controlli e testo
+   più generosi per non sembrare persi nello spazio. */
+@media (min-width: 900px) {
+  .sc-bar {
+    padding: 0.7rem 0.8rem 0.7rem 1rem;
+  }
+  .sc-section {
+    font-size: 1.1rem;
+    padding: 0.85rem 1.5rem;
+  }
+  .sc-price {
+    font-size: 1.3rem;
+  }
+  .sc-add {
+    font-size: 1.08rem;
+    padding: 0.95rem 1.8rem;
+  }
+  .sc-popover {
+    padding: 1.4rem 1.6rem 1.5rem;
+    max-height: 50vh;
+  }
+  .sc-pop-head strong {
+    font-size: 1.25rem;
+  }
+  .sc-toggle-btn {
+    font-size: 1.02rem;
+    padding: 0.65rem 1.5rem;
+  }
+  .sc-part,
+  .sc-cat {
+    font-size: 1rem;
+    padding: 0.62rem 1.25rem;
+  }
+  .sc-model {
+    font-size: 1rem;
+    padding: 0.72rem 1.15rem;
+  }
+  .sc-model-thumb {
+    width: 24px;
+    height: 24px;
+  }
+  .sc-swatch {
+    width: 48px;
+    height: 48px;
+  }
+  .sc-launcher {
+    padding: 1.35rem 2.2rem;
+  }
+  .sc-launcher-text strong {
+    font-size: 1.3rem;
+  }
+  .sc-launcher-text span {
+    font-size: 1rem;
   }
 }
