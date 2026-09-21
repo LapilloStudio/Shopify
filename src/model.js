@@ -62,12 +62,14 @@ export async function createSandal(scene, { modelUrl } = {}) {
   if (modelUrl) {
     try {
       const gltf = await new GLTFLoader().loadAsync(modelUrl);
+      const unmatched = [];
       gltf.scene.traverse((obj) => {
         if (!obj.isMesh) return;
         const m = NAME_RE.exec(obj.name || '');
         if (!m) {
           obj.castShadow = true;
           obj.receiveShadow = true;
+          unmatched.push(obj.name || '(senza nome)');
           return; // mesh decorativa fuori contract: resta com'è
         }
         // Material dedicata per mesh: il colore di una parte non tocca le altre.
@@ -76,6 +78,12 @@ export async function createSandal(scene, { modelUrl } = {}) {
           : obj.material.clone();
         registerMesh(m[1], m[2] || null, obj);
       });
+      if (unmatched.length) {
+        console.warn(
+          `[sandal] Queste mesh nel .glb non seguono la convenzione Sole/UpperFront/UpperBack/UpperWhole ` +
+            `(opzionale __idModello) e restano fisse — non rispondono a colore/modalità: ${unmatched.join(', ')}`
+        );
+      }
       group.add(gltf.scene);
     } catch (e) {
       console.warn('[sandal] Caricamento GLB fallito, uso la geometria segnaposto:', e);
