@@ -59,13 +59,19 @@ export async function createSandal(scene, { modelUrl } = {}) {
 
   // ---- caricamento GLB (se fornito) ----
   const NAME_RE = /^(Sole|UpperFront|UpperBack|UpperWhole)(?:__(.+))?$/;
+  // Un oggetto con più materiali viene esportato/caricato come mesh separate
+  // con suffisso "_1", "_2", ... (comportamento normale di three.js/glTF):
+  // lo ignoriamo per il riconoscimento della parte.
+  function matchMeshName(name) {
+    return NAME_RE.exec((name || '').replace(/_\d+$/, ''));
+  }
   if (modelUrl) {
     try {
       const gltf = await new GLTFLoader().loadAsync(modelUrl);
       const unmatched = [];
       gltf.scene.traverse((obj) => {
         if (!obj.isMesh) return;
-        const m = NAME_RE.exec(obj.name || '');
+        const m = matchMeshName(obj.name);
         if (!m) {
           obj.castShadow = true;
           obj.receiveShadow = true;
