@@ -3,3 +3,7 @@ node_modules/
 *.log
 dist/
 .vite/
+
+# Modelli 3D di test locale (vedi public/models/README.md) — non versionati
+public/models/*.glb
+public/models/*.gltf

@@ -23,7 +23,10 @@
   <body>
     <div class="wrap">
       <h1>Configuratore 3D Sandalo — Anteprima sviluppo</h1>
-      <p class="note">Geometria segnaposto. L'aggiunta al carrello è simulata (vedi console del browser).</p>
+      <p class="note">
+        Geometria segnaposto se <code>public/models/sandal.glb</code> non esiste,
+        altrimenti il tuo modello reale. L'aggiunta al carrello è simulata (vedi console del browser).
+      </p>
 
       <div class="sandal-configurator-embed">
         <button type="button" class="button button--primary" data-sc-open aria-haspopup="dialog">
@@ -33,7 +36,9 @@
 
         <div class="sc-modal" data-sc-modal hidden role="dialog" aria-modal="true" aria-label="Configura il tuo sandalo">
           <button type="button" class="sc-modal-close" data-sc-close aria-label="Chiudi">&times;</button>
-          <div class="sandal-configurator">
+          <!-- data-model-url: metti sandal.glb in public/models/ (vedi public/models/README.md).
+               Se il file non c'è, il loader ricade da solo sul segnaposto: nessun errore. -->
+          <div class="sandal-configurator" data-model-url="/models/sandal.glb">
             <div data-sc-canvas></div>
             <div data-sc-panel></div>
           </div>
