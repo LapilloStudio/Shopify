@@ -72,14 +72,14 @@ test('integrità config: default validi e fasce ben formate', () => {
 test('le properties del carrello riflettono modalità, modello e colore', () => {
   const sel = defaultSelection();
   const propsSplit = buildProperties(sel);
-  assert.equal(propsSplit['Tomaia'], 'Separata (davanti + dietro)');
-  assert.ok(propsSplit['Tomaia davanti'].includes('Classica'));
-  assert.ok(propsSplit['Tomaia davanti'].includes('Nero'));
-  assert.ok(!('Tomaia intera' in propsSplit));
+  assert.equal(propsSplit['Upper'], 'Split (front + back)');
+  assert.ok(propsSplit['Front upper'].includes('Classic'));
+  assert.ok(propsSplit['Front upper'].includes('Black'));
+  assert.ok(!('Whole upper' in propsSplit));
 
   sel.mode = UPPER_MODE.WHOLE;
   const propsWhole = buildProperties(sel);
-  assert.equal(propsWhole['Tomaia'], 'Intera');
-  assert.ok('Tomaia intera' in propsWhole);
-  assert.ok(!('Tomaia davanti' in propsWhole));
+  assert.equal(propsWhole['Upper'], 'Whole');
+  assert.ok('Whole upper' in propsWhole);
+  assert.ok(!('Front upper' in propsWhole));
 });

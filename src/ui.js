@@ -120,11 +120,11 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
       const res = await addToCart(selection());
       const isMock = res && res.mock;
       state.addStatus = isMock
-        ? 'Aggiunto (anteprima) — payload nella console.'
-        : 'Aggiunto al carrello!';
+        ? 'Added (preview) — payload in the console.'
+        : 'Added to cart!';
       if (!isMock && onAdded) onAdded();
     } catch (err) {
-      state.addStatus = 'Errore: ' + err.message;
+      state.addStatus = 'Error: ' + err.message;
     }
     state.adding = false;
     render();
@@ -184,7 +184,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
         </div>
         <div class="sc-checkout">
           <span class="sc-price">${formatMoney(price.total, currency)}</span>
-          <button class="sc-add" data-add data-fk="add" ${state.adding ? 'disabled' : ''}>${state.adding ? 'Aggiunta…' : 'Aggiungi al carrello'}</button>
+          <button class="sc-add" data-add data-fk="add" ${state.adding ? 'disabled' : ''}>${state.adding ? 'Adding…' : 'Add to cart'}</button>
         </div>
       </div>
       ${state.addStatus ? `<p class="sc-status" aria-live="polite">${state.addStatus}</p>` : ''}
@@ -194,12 +194,12 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
   function popoverHTML() {
     const isTomaia = state.activeSection === 'tomaia';
     const partId = currentPart();
-    const title = isTomaia ? 'Tomaia' : 'Suola';
+    const title = isTomaia ? 'Upper' : 'Sole';
     return `
       <div class="sc-popover" role="dialog" aria-label="${title}">
         <div class="sc-pop-head">
           <strong>${title}</strong>
-          <button class="sc-close" data-close data-fk="close" aria-label="Chiudi">&times;</button>
+          <button class="sc-close" data-close data-fk="close" aria-label="Close">&times;</button>
         </div>
         ${isTomaia ? modeToggleHTML() + partsHTML() : ''}
         ${catsHTML()}
@@ -212,7 +212,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
   function modeToggleHTML() {
     const btn = (m, label) =>
       `<button class="sc-toggle-btn${state.mode === m ? ' is-active' : ''}" data-mode="${m}" data-fk="m:${m}" aria-pressed="${state.mode === m}">${label}</button>`;
-    return `<div class="sc-toggle" role="group" aria-label="Tipo di tomaia">${btn(UPPER_MODE.SPLIT, 'Separata')}${btn(UPPER_MODE.WHOLE, 'Intera')}</div>`;
+    return `<div class="sc-toggle" role="group" aria-label="Upper type">${btn(UPPER_MODE.SPLIT, 'Split')}${btn(UPPER_MODE.WHOLE, 'Whole')}</div>`;
   }
 
   function partsHTML() {
@@ -243,7 +243,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
           const badge = m.priceDelta ? `<span class="sc-badge">+${formatMoney(m.priceDelta, currency)}</span>` : '';
           return `<button class="sc-model${active ? ' is-active' : ''}" data-model="${m.id}" data-fk="mo:${m.id}" aria-pressed="${active}">
               <span class="sc-model-thumb" style="--sc-color:${thumb ? thumb.hex : '#ccc'}"></span>
-              <span class="sc-model-label">${m.label}${single ? ' · colore unico' : ''}</span>
+              <span class="sc-model-label">${m.label}${single ? ' · single color' : ''}</span>
               ${badge}
             </button>`;
         })
@@ -259,7 +259,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
         return `<button class="sc-swatch${c.id === current ? ' is-active' : ''}" data-color="${c.id}" data-fk="co:${c.id}" aria-pressed="${c.id === current}" style="--sc-color:${c.hex}" title="${c.label}${extra}" aria-label="${c.label}"></button>`;
       })
       .join('');
-    const note = colors.length === 1 ? `<span class="sc-fixed">Colore unico per questo modello</span>` : '';
+    const note = colors.length === 1 ? `<span class="sc-fixed">Single color for this model</span>` : '';
     return `<div class="sc-swatches">${swatches}${note}</div>`;
   }
 

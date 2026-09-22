@@ -24,14 +24,14 @@ export function computePrice(selection) {
     const color = colorById[sel.color];
     if (color && color.priceDelta > 0) {
       surcharge += color.priceDelta;
-      breakdown.push({ label: `Colore ${color.label}`, amount: color.priceDelta });
+      breakdown.push({ label: `Color: ${color.label}`, amount: color.priceDelta });
     }
   }
 
   // Sovrapprezzo per la modalità tomaia intera.
   if (selection.mode === UPPER_MODE.WHOLE && PRICING.wholeUpperSurcharge > 0) {
     surcharge += PRICING.wholeUpperSurcharge;
-    breakdown.push({ label: 'Tomaia intera', amount: PRICING.wholeUpperSurcharge });
+    breakdown.push({ label: 'Whole upper', amount: PRICING.wholeUpperSurcharge });
   }
 
   return { base, surcharge, total: base + surcharge, breakdown };
@@ -47,6 +47,6 @@ export function computeTier(selection) {
 }
 
 // Formatta centesimi in valuta.
-export function formatMoney(cents, currency = 'EUR', locale = 'it-IT') {
+export function formatMoney(cents, currency = 'EUR', locale = 'en-US') {
   return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(cents / 100);
 }

@@ -5,10 +5,10 @@ const colorById = Object.fromEntries(COLORS.map((c) => [c.id, c]));
 
 // Etichette leggibili delle parti per le line item properties.
 const PROP_LABEL = {
-  [PART.UPPER_FRONT]: 'Tomaia davanti',
-  [PART.UPPER_BACK]: 'Tomaia dietro',
-  [PART.UPPER_WHOLE]: 'Tomaia intera',
-  [PART.SOLE]: 'Suola',
+  [PART.UPPER_FRONT]: 'Front upper',
+  [PART.UPPER_BACK]: 'Back upper',
+  [PART.UPPER_WHOLE]: 'Whole upper',
+  [PART.SOLE]: 'Sole',
 };
 
 // Dati iniettati dalla sezione Liquid (in Shopify). Nell'harness/dev è assente -> mock.
@@ -19,7 +19,7 @@ function getShopData() {
 // Costruisce le line item properties leggibili: per ogni parte visibile "Modello / Colore".
 export function buildProperties(selection) {
   const props = {};
-  props['Tomaia'] = selection.mode === UPPER_MODE.WHOLE ? 'Intera' : 'Separata (davanti + dietro)';
+  props['Upper'] = selection.mode === UPPER_MODE.WHOLE ? 'Whole' : 'Split (front + back)';
 
   for (const partId of visibleParts(selection.mode)) {
     const sel = selection.parts[partId];
@@ -59,18 +59,18 @@ export async function addToCart(selection) {
   }
 
   const variant = findVariantForTier(data, tier);
-  if (!variant) throw new Error('Nessuna variante disponibile per questo prodotto.');
+  if (!variant) throw new Error('No variant available for this product.');
   if (variant.available === false) {
-    throw new Error(`La configurazione "${tier.label}" non è al momento disponibile.`);
+    throw new Error(`This configuration ("${tier.label}") is currently unavailable.`);
   }
 
   // Proprietà nascosta (prefisso "_"): dettaglio macchina-leggibile per il merchant,
   // non mostrata al cliente nella maggior parte dei temi OS 2.0.
-  properties._configurazione = JSON.stringify({
+  properties._configuration = JSON.stringify({
     mode: selection.mode,
     parts: selection.parts,
     tier: tier.id,
-    totale_calcolato: price.total,
+    computed_total: price.total,
   });
 
   const addUrl = (data.routes && data.routes.cart_add_url) || '/cart/add.js';
@@ -79,7 +79,7 @@ export async function addToCart(selection) {
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ items: [{ id: variant.id, quantity: 1, properties }] }),
   });
-  if (!res.ok) throw new Error(`Carrello: HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`Cart error: HTTP ${res.status}`);
   const json = await res.json();
 
   document.dispatchEvent(new CustomEvent('sandal:added', { detail: json }));

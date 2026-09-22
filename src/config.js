@@ -15,10 +15,10 @@ export const PART = {
 };
 
 export const PART_LABELS = {
-  [PART.UPPER_FRONT]: 'Davanti',
-  [PART.UPPER_BACK]: 'Dietro',
-  [PART.UPPER_WHOLE]: 'Intera',
-  [PART.SOLE]: 'Suola',
+  [PART.UPPER_FRONT]: 'Front',
+  [PART.UPPER_BACK]: 'Back',
+  [PART.UPPER_WHOLE]: 'Whole',
+  [PART.SOLE]: 'Sole',
 };
 
 // Modalità della tomaia (mutuamente esclusive).
@@ -42,27 +42,27 @@ export function visibleParts(mode) {
 
 // Sezioni di primo livello (barra in basso).
 export const SECTIONS = [
-  { id: 'tomaia', label: 'Tomaia' },
-  { id: 'suola', label: 'Suola' },
+  { id: 'tomaia', label: 'Upper' },
+  { id: 'suola', label: 'Sole' },
 ];
 
 // Categorie dentro ogni parte (drill-down): prima il Modello, poi il Colore.
 export const CATEGORIES = [
-  { id: 'modello', label: 'Modello' },
-  { id: 'colore', label: 'Colore' },
+  { id: 'modello', label: 'Model' },
+  { id: 'colore', label: 'Color' },
 ];
 
 // ---------------------------------------------------------------------------
 // Colori. `priceDelta` in centesimi (sovrapprezzo per i colori "premium").
 // ---------------------------------------------------------------------------
 export const COLORS = [
-  { id: 'natural', label: 'Naturale', hex: '#d9b38c', priceDelta: 0 },
-  { id: 'black', label: 'Nero', hex: '#1f1f1f', priceDelta: 0 },
-  { id: 'white', label: 'Bianco', hex: '#f2efe9', priceDelta: 0 },
-  { id: 'tan', label: 'Cuoio', hex: '#a9743b', priceDelta: 0 },
-  { id: 'red', label: 'Rosso', hex: '#b5322f', priceDelta: 500 },
-  { id: 'cobalt', label: 'Cobalto', hex: '#2f5bb5', priceDelta: 500 },
-  { id: 'gold', label: 'Oro', hex: '#c9a227', priceDelta: 800 },
+  { id: 'natural', label: 'Natural', hex: '#d9b38c', priceDelta: 0 },
+  { id: 'black', label: 'Black', hex: '#1f1f1f', priceDelta: 0 },
+  { id: 'white', label: 'White', hex: '#f2efe9', priceDelta: 0 },
+  { id: 'tan', label: 'Tan', hex: '#a9743b', priceDelta: 0 },
+  { id: 'red', label: 'Red', hex: '#b5322f', priceDelta: 500 },
+  { id: 'cobalt', label: 'Cobalt', hex: '#2f5bb5', priceDelta: 500 },
+  { id: 'gold', label: 'Gold', hex: '#c9a227', priceDelta: 800 },
 ];
 
 // Set di colori riutilizzabili (riferiti per nome in MODELS_BY_PART.colors).
@@ -79,22 +79,22 @@ export const COLOR_SETS = {
 // ---------------------------------------------------------------------------
 export const MODELS_BY_PART = {
   [PART.UPPER_FRONT]: [
-    { id: 'classic', label: 'Classica', priceDelta: 0, colors: 'standard' },
-    { id: 'cross', label: 'Incrociata', priceDelta: 500, colors: 'full' },
+    { id: 'classic', label: 'Classic', priceDelta: 0, colors: 'standard' },
+    { id: 'cross', label: 'Crossed', priceDelta: 500, colors: 'full' },
     { id: 'gold', label: 'Gold Edition', priceDelta: 1500, colors: ['gold'] },
   ],
   [PART.UPPER_BACK]: [
-    { id: 'strap', label: 'Cinturino', priceDelta: 0, colors: 'standard' },
-    { id: 'closed', label: 'Chiusa', priceDelta: 500, colors: 'full' },
+    { id: 'strap', label: 'Strap', priceDelta: 0, colors: 'standard' },
+    { id: 'closed', label: 'Closed', priceDelta: 500, colors: 'full' },
   ],
   [PART.UPPER_WHOLE]: [
-    { id: 'band', label: 'Fascia unica', priceDelta: 0, colors: 'standard' },
-    { id: 'woven', label: 'Intrecciata', priceDelta: 800, colors: 'full' },
+    { id: 'band', label: 'Single Band', priceDelta: 0, colors: 'standard' },
+    { id: 'woven', label: 'Woven', priceDelta: 800, colors: 'full' },
     { id: 'platinum', label: 'Platinum', priceDelta: 2000, colors: ['white'] },
   ],
   [PART.SOLE]: [
-    { id: 'flat', label: 'Bassa', priceDelta: 0, colors: 'standard' },
-    { id: 'wedge', label: 'Zeppa', priceDelta: 1000, colors: 'standard' },
+    { id: 'flat', label: 'Flat', priceDelta: 0, colors: 'standard' },
+    { id: 'wedge', label: 'Wedge', priceDelta: 1000, colors: 'standard' },
   ],
 };
 

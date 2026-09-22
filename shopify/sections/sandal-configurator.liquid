@@ -15,7 +15,7 @@
 <div class="sandal-configurator-embed">
   {%- comment -%} Usa le classi native del tema (.button) così il bottone è identico agli altri del sito. {%- endcomment -%}
   <button type="button" class="button button--primary" data-sc-open aria-haspopup="dialog">
-    {{ section.settings.heading | default: 'Configura il tuo sandalo' }}
+    {{ section.settings.heading | default: 'Configure your sandal' }}
   </button>
   {%- if section.settings.subheading != blank -%}
     <p class="sc-launcher-sub">{{ section.settings.subheading }}</p>
@@ -27,9 +27,9 @@
     hidden
     role="dialog"
     aria-modal="true"
-    aria-label="{{ section.settings.heading | default: 'Configura il tuo sandalo' }}"
+    aria-label="{{ section.settings.heading | default: 'Configure your sandal' }}"
   >
-    <button type="button" class="sc-modal-close" data-sc-close aria-label="Chiudi">&times;</button>
+    <button type="button" class="sc-modal-close" data-sc-close aria-label="Close">&times;</button>
     <div
       class="sandal-configurator"
       {%- if section.settings.model_filename != blank %}
@@ -48,35 +48,35 @@
 
 {% schema %}
 {
-  "name": "Configuratore Sandalo 3D",
+  "name": "3D Sandal Configurator",
   "tag": "section",
   "class": "sandal-configurator-wrapper",
   "settings": [
     {
       "type": "text",
       "id": "heading",
-      "label": "Titolo bottone",
-      "default": "Configura il tuo sandalo"
+      "label": "Button title",
+      "default": "Configure your sandal"
     },
     {
       "type": "text",
       "id": "subheading",
-      "label": "Sottotitolo (opzionale)",
-      "default": "Scegli colori e tomaia in 3D"
+      "label": "Subtitle (optional)",
+      "default": "Choose colors and upper in 3D"
     },
     {
       "type": "product",
       "id": "product",
-      "label": "Prodotto configuratore",
-      "info": "Il prodotto con le varianti a fasce di prezzo (es. Standard / Plus / Premium)."
+      "label": "Configurator product",
+      "info": "The product with price-tier variants (e.g. Standard / Plus / Premium)."
     },
     {
       "type": "text",
       "id": "model_filename",
-      "label": "Nome file modello .glb (opzionale)",
-      "info": "Es. sandal.glb (caricato negli asset del tema). Lascia vuoto per usare la geometria segnaposto."
+      "label": "3D model filename (.glb, optional)",
+      "info": "E.g. sandal.glb (uploaded to the theme assets). Leave blank to use placeholder geometry."
     }
   ],
-  "presets": [{ "name": "Configuratore Sandalo 3D" }]
+  "presets": [{ "name": "3D Sandal Configurator" }]
 }
 {% endschema %}
