@@ -88,11 +88,15 @@ export function createScene(canvas) {
   fill.position.set(-4, 2, -2);
   scene.add(fill);
 
-  // Piano che riceve solo l'ombra (trasparente).
+  // Piano che riceve solo l'ombra (trasparente). Leggermente sotto lo zero:
+  // così un modello con la base non perfettamente a y=0 (piccoli errori di
+  // allineamento) non "affonda" nel piano, cosa che taglierebbe l'ombra a
+  // metà oggetto invece di mostrarla sotto.
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(40, 40),
     new THREE.ShadowMaterial({ opacity: 0.13 })
   );
+  ground.position.y = -0.03;
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
