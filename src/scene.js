@@ -32,9 +32,23 @@ export function createScene(canvas) {
   controls.maxPolarAngle = Math.PI * 0.52; // evita di andare sotto il piano
   controls.target.set(0, 0.05, 0);
 
-  // Con il pannello opzioni aperto il target scende: il prodotto sale nella metà
-  // alta dello stage e resta visibile mentre si cambiano le opzioni.
-  let targetY = 0.05;
+  // Ultime dimensioni note del canvas (servono per l'offset di inquadratura sotto).
+  let lastW = 1;
+  let lastH = 1;
+  // Larghezza (in px CSS) occupata a destra dal pannello laterale, incluso il
+  // suo margine: sposta l'inquadratura verso sinistra così il prodotto resta
+  // centrato nello spazio libero invece di finire mezzo coperto dal pannello.
+  let sidePanelPx = 0;
+
+  function applyViewOffset() {
+    if (sidePanelPx > 0 && lastW > 0 && lastH > 0) {
+      const shift = sidePanelPx / 2;
+      camera.setViewOffset(lastW + shift, lastH, shift, 0, lastW, lastH);
+    } else {
+      camera.clearViewOffset();
+    }
+    camera.updateProjectionMatrix();
+  }
 
   // Rotazione automatica: attiva all'avvio, si ferma mentre l'utente trascina e
   // riparte piano dopo che rilascia (breve pausa + velocità che sale gradualmente).
@@ -106,9 +120,11 @@ export function createScene(canvas) {
     if (!parent) return;
     const w = parent.clientWidth || 1;
     const h = parent.clientHeight || Math.round(w * 0.75);
+    lastW = w;
+    lastH = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    camera.updateProjectionMatrix();
+    applyViewOffset(); // aggiorna anche la projection matrix
   }
 
   // ResizeObserver sul contenitore: reagisce anche ai cambi di layout del tema
@@ -133,7 +149,6 @@ export function createScene(canvas) {
     requestAnimationFrame(animate);
     if (!inView) return;
     updateAutoRotate();
-    controls.target.y += (targetY - controls.target.y) * 0.08; // reframe morbido
     controls.update();
     renderer.render(scene, camera);
   }
@@ -145,8 +160,9 @@ export function createScene(canvas) {
     renderer,
     controls,
     resize,
-    setPanelOpen(open) {
-      targetY = open ? -0.5 : 0.05;
+    setSidePanelWidth(px) {
+      sidePanelPx = px;
+      applyViewOffset();
     },
     dispose() {
       running = false;

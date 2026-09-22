@@ -27,17 +27,29 @@ async function mountConfigurator(stage, embed) {
   const sandal = await createSandal(sceneApi.scene, { modelUrl });
   sceneApi.resize();
 
+  // Il pannello è ancorato a destra a larghezza pressoché fissa: misuriamo lo
+  // spazio che occupa (incluso il margine) e spostiamo l'inquadratura della
+  // camera così il prodotto resta centrato nello spazio libero rimasto.
+  let panelResizeObserver = null;
+  if (panelEl && typeof ResizeObserver !== 'undefined') {
+    panelResizeObserver = new ResizeObserver(() => {
+      const rect = panelEl.getBoundingClientRect();
+      const occupied = Math.max(0, window.innerWidth - rect.left);
+      sceneApi.setSidePanelWidth(occupied);
+    });
+    panelResizeObserver.observe(panelEl);
+  }
+
   if (panelEl) {
     createUI(panelEl, sandal, {
       currency,
-      onPanelToggle: (open) => sceneApi.setPanelOpen(open),
       // Su un vero add-to-cart (non l'anteprima mock) chiudiamo la modale:
       // l'utente torna alla pagina/carrello invece di restare nell'overlay.
       onAdded: () => closeModal(embed),
     });
   }
 
-  const inst = { sceneApi };
+  const inst = { sceneApi, panelResizeObserver };
   instances.set(stage, inst);
   return inst;
 }
@@ -103,6 +115,7 @@ document.addEventListener('shopify:section:unload', (e) => {
   for (const [stage, inst] of instances) {
     if (!document.contains(stage) || (e.target && e.target.contains(stage))) {
       inst.sceneApi.dispose();
+      if (inst.panelResizeObserver) inst.panelResizeObserver.disconnect();
       instances.delete(stage);
     }
   }

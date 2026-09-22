@@ -17,9 +17,8 @@ import { addToCart } from './cart.js';
 const colorById = Object.fromEntries(COLORS.map((c) => [c.id, c]));
 
 // Costruisce la barra in basso + il pannello drill-down, mantiene lo stato e lo applica al 3D.
-// onPanelToggle(open) viene chiamato quando il pannello opzioni si apre/chiude.
 // onAdded() viene chiamato dopo un add-to-cart reale riuscito (non l'anteprima mock).
-export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdded } = {}) {
+export function createUI(root, sandal, { currency = 'EUR', onAdded } = {}) {
   const state = {
     mode: DEFAULT_MODE,
     parts: deepClone(DEFAULT_PARTS), // { [partId]: { model, color } }
@@ -60,10 +59,6 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
     return { mode: state.mode, parts: state.parts };
   }
 
-  function notifyPanel() {
-    if (onPanelToggle) onPanelToggle(!!state.activeSection);
-  }
-
   // ---- handlers ----
   function toggleSection(id) {
     if (state.activeSection === id) {
@@ -79,7 +74,6 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
       }
     }
     state.addStatus = '';
-    notifyPanel();
     render();
   }
 
@@ -141,7 +135,7 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
     const color = t.closest('[data-color]');
 
     if (section) return toggleSection(section.dataset.section);
-    if (t.closest('[data-close]')) { state.activeSection = null; notifyPanel(); return render(); }
+    if (t.closest('[data-close]')) { state.activeSection = null; return render(); }
     if (mode) return setMode(mode.dataset.mode);
     if (part) { state.activePart = part.dataset.part; state.activeCategory = 'modello'; return render(); }
     if (cat) { state.activeCategory = cat.dataset.cat; return render(); }
@@ -155,7 +149,6 @@ export function createUI(root, sandal, { currency = 'EUR', onPanelToggle, onAdde
     if (e.key === 'Escape' && state.activeSection) {
       e.stopPropagation(); // non lasciare che l'Escape chiuda anche la modale a schermo intero
       state.activeSection = null;
-      notifyPanel();
       render();
       root.querySelector('[data-section]')?.focus();
     }

@@ -29,7 +29,7 @@
 .sc-modal-close {
   position: absolute;
   top: 16px;
-  right: 16px;
+  left: 16px;
   z-index: 5;
   width: 48px;
   height: 48px;
@@ -92,44 +92,52 @@ html.sc-modal-open body {
   touch-action: none;
 }
 
-/* ---- Pannello flottante (barra + popover) ---- */
+/* ---- Pannello laterale (barra + popover), ancorato a destra a tutta altezza ---- */
 .sandal-configurator [data-sc-panel] {
   position: absolute;
-  left: 50%;
+  top: 24px;
+  right: 24px;
   bottom: 24px;
-  transform: translateX(-50%);
-  width: min(960px, calc(100% - 32px));
+  left: auto;
+  transform: none;
+  width: min(380px, calc(100% - 48px));
   z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.6em;
+  overflow-y: auto;
   /* Unità base della UI: cresce con la larghezza dello schermo.
      Tutte le misure interne sono in em rispetto a questa. */
-  --sc-ui: clamp(15px, 0.7vw + 10px, 24px);
+  --sc-ui: clamp(14px, 0.5vw + 10px, 19px);
   font-size: var(--sc-ui);
   line-height: 1.3;
 }
 
 .sc-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5em;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.6em;
   background: rgba(255, 255, 255, 0.85);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 0.7em;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  padding: 0.3em 0.35em 0.3em 0.55em;
+  padding: 0.6em 0.6em 0.7em;
 }
 .sc-sections {
   display: flex;
+  justify-content: center;
   gap: 0.25em;
 }
 .sc-section {
+  flex: 1;
   border: none;
   background: transparent;
   color: inherit;
-  padding: 0.5em 0.95em;
+  padding: 0.5em 0.7em;
   border-radius: var(--buttons-radius, 0.5em);
   cursor: pointer;
   font-size: 1em;
@@ -145,7 +153,10 @@ html.sc-modal-open body {
 .sc-checkout {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.6em;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  padding-top: 0.6em;
 }
 .sc-price {
   font-weight: 600;
@@ -175,7 +186,6 @@ html.sc-modal-open body {
   border-radius: 0.7em;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
   padding: 1em 1.15em 1.2em;
-  margin-bottom: 0.5em;
   max-height: 58vh;
   overflow-y: auto;
   animation: sc-pop 0.18s ease;
@@ -362,14 +372,4 @@ html.sc-modal-open body {
   font-size: 0.85em;
   margin: 0.5em 0 0;
   opacity: 0.85;
-}
-
-@media (max-width: 520px) {
-  .sc-bar {
-    justify-content: center;
-  }
-  .sc-checkout {
-    width: 100%;
-    justify-content: space-between;
-  }
 }
