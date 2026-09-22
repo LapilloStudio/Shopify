@@ -66,13 +66,16 @@ export function createScene(canvas) {
     }
   }
 
-  // Luci: l'environment dà l'ambiente; key light direzionale per l'ombra.
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 0.35));
+  // Luci: l'environment dà l'ambiente; key light direzionale per l'ombra
+  // (intensità moderata + luce ambiente più alta = ombre di contatto morbide,
+  // non macchie scure nette come con un key light forte e poco fill).
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 0.55));
 
-  const key = new THREE.DirectionalLight(0xffffff, 1.6);
+  const key = new THREE.DirectionalLight(0xffffff, 1.15);
   key.position.set(4, 6, 4);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
+  key.shadow.radius = 4; // sfoca i bordi dell'ombra (PCFSoftShadowMap)
   key.shadow.camera.near = 1;
   key.shadow.camera.far = 20;
   key.shadow.camera.left = -4;
@@ -81,14 +84,14 @@ export function createScene(canvas) {
   key.shadow.camera.bottom = -4;
   scene.add(key);
 
-  const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.45);
   fill.position.set(-4, 2, -2);
   scene.add(fill);
 
   // Piano che riceve solo l'ombra (trasparente).
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(40, 40),
-    new THREE.ShadowMaterial({ opacity: 0.18 })
+    new THREE.ShadowMaterial({ opacity: 0.13 })
   );
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
