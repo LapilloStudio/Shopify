@@ -12,7 +12,8 @@ import { PART, UPPER_MODE, TOMAIA_PARTS_BY_MODE } from './config.js';
 // Model Contract per i .glb: mesh chiamate `Sole`, `UpperFront`, `UpperBack`,
 // `UpperWhole`, opzionalmente con suffisso stile `__idModello`
 // (es. `UpperFront__cross`, `UpperWhole__woven`). Vedi README.
-export async function createSandal(scene, { modelUrl } = {}) {
+// onChange() viene chiamato quando cambia la geometria visibile (per ricalcolare l'ombra).
+export async function createSandal(scene, { modelUrl, onChange } = {}) {
   const group = new THREE.Group();
   scene.add(group);
 
@@ -33,8 +34,6 @@ export async function createSandal(scene, { modelUrl } = {}) {
     if (modelId) entry.models.add(modelId);
     const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     entry.materials.push(...mats);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
   }
 
   function partVisibleInMode(partName) {
@@ -55,6 +54,7 @@ export async function createSandal(scene, { modelUrl } = {}) {
         mesh.visible = partVisible && (modelId === null || modelId === current);
       }
     }
+    if (onChange) onChange();
   }
 
   // ---- caricamento GLB (se fornito) ----
@@ -73,8 +73,6 @@ export async function createSandal(scene, { modelUrl } = {}) {
         if (!obj.isMesh) return;
         const m = matchMeshName(obj.name);
         if (!m) {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
           unmatched.push(obj.name || '(senza nome)');
           return; // mesh decorativa fuori contract: resta com'è
         }

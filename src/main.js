@@ -24,8 +24,12 @@ async function mountConfigurator(stage, embed) {
   const currency = data.currency || 'EUR';
 
   const sceneApi = createScene(canvas);
-  const sandal = await createSandal(sceneApi.scene, { modelUrl });
+  const sandal = await createSandal(sceneApi.scene, {
+    modelUrl,
+    onChange: () => sceneApi.invalidateShadow(),
+  });
   sceneApi.resize();
+  sceneApi.setSubject(sandal.group);
 
   // Il pannello è ancorato a destra a larghezza pressoché fissa: misuriamo lo
   // spazio che occupa (incluso il margine) e spostiamo l'inquadratura della

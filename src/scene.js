@@ -1,27 +1,34 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { createStudioEnvironment, createContactShadow } from './studio.js';
 
-// Crea e gestisce la scena Three.js: renderer, camera, luci + environment,
-// controlli con auto-rotazione iniziale, ombra, resize e pausa fuori viewport.
-// Ritorna { scene, camera, renderer, controls, resize, dispose }.
+// Crea e gestisce la scena Three.js: renderer, camera, ambiente "studio",
+// ombra di contatto, controlli con auto-rotazione, resize e pausa fuori viewport.
 export function createScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
 
-  // Environment procedurale (nessun asset esterno): riflessi/ambiente realistici sui PBR.
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  // Luce principale: l'ambiente studio (riflessi + luce diffusa da softbox).
+  const envTex = createStudioEnvironment(renderer);
   scene.environment = envTex;
 
-  const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  // Una key light leggera (senza shadow map) per dare definizione ai volumi.
+  const key = new THREE.DirectionalLight(0xffffff, 0.8);
+  key.position.set(4, 6, 4);
+  scene.add(key);
+
+  // Ombra di contatto morbida alla base del modello (ricalcolata solo se cambia).
+  const shadow = createContactShadow(renderer);
+  scene.add(shadow.group);
+  let shadowDirty = true;
+  let subject = null;
+
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
   camera.position.set(2.7, 1.55, 3.0);
 
   const controls = new OrbitControls(camera, renderer.domElement);
@@ -29,15 +36,14 @@ export function createScene(canvas) {
   controls.dampingFactor = 0.08;
   controls.minDistance = 2.2;
   controls.maxDistance = 8;
-  controls.maxPolarAngle = Math.PI * 0.52; // evita di andare sotto il piano
+  controls.maxPolarAngle = Math.PI * 0.49; // mai sotto il pavimento
   controls.target.set(0, 0.05, 0);
 
-  // Ultime dimensioni note del canvas (servono per l'offset di inquadratura sotto).
+  // Ultime dimensioni note del canvas (servono per l'offset di inquadratura).
   let lastW = 1;
   let lastH = 1;
-  // Larghezza (in px CSS) occupata a destra dal pannello laterale, incluso il
-  // suo margine: sposta l'inquadratura verso sinistra così il prodotto resta
-  // centrato nello spazio libero invece di finire mezzo coperto dal pannello.
+  // Larghezza (px CSS) occupata a destra dal pannello laterale: spostiamo
+  // l'inquadratura a sinistra così il prodotto resta centrato nello spazio libero.
   let sidePanelPx = 0;
 
   function applyViewOffset() {
@@ -50,70 +56,65 @@ export function createScene(canvas) {
     camera.updateProjectionMatrix();
   }
 
-  // Rotazione automatica: attiva all'avvio, si ferma mentre l'utente trascina e
-  // riparte piano dopo che rilascia (breve pausa + velocità che sale gradualmente).
-  const AUTOROTATE_SPEED = 1.0; // velocità a regime
-  const RESUME_DELAY = 1200; // ms di inattività prima di ricominciare
-  const RESUME_RAMP = AUTOROTATE_SPEED / 90; // ~1.5s per tornare a regime (60fps)
-  let resumeAt = null; // timestamp a cui ripartire, o null
+  // Inquadra automaticamente l'oggetto (qualunque scala/posizione abbia nel
+  // file), mantenendo la direzione di vista corrente, e aggancia l'ombra alla
+  // sua base reale. Il box include anche le varianti nascoste: inquadratura
+  // stabile quando si cambia modello/modalità.
+  function frame(object) {
+    const box = new THREE.Box3().setFromObject(object);
+    if (box.isEmpty()) return;
+    const center = box.getCenter(new THREE.Vector3());
+    const radius = box.getSize(new THREE.Vector3()).length() / 2;
+
+    const visibleW = Math.max(1, lastW - sidePanelPx);
+    const aspect = visibleW / Math.max(1, lastH);
+    const vFov = THREE.MathUtils.degToRad(camera.fov);
+    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * aspect);
+    const dist = (radius / Math.sin(Math.min(vFov, hFov) / 2)) * 0.95;
+
+    const dir = camera.position.clone().sub(controls.target).normalize();
+    controls.target.copy(center);
+    camera.position.copy(center).addScaledVector(dir, dist);
+    controls.minDistance = dist * 0.45;
+    controls.maxDistance = dist * 2.5;
+    camera.near = dist / 100;
+    camera.far = dist * 20;
+    applyViewOffset();
+    controls.update();
+
+    shadow.fit(box);
+    shadowDirty = true;
+  }
+
+  // Rotazione automatica: si ferma mentre l'utente trascina e riparte piano
+  // dopo che rilascia (breve pausa + velocità che sale gradualmente).
+  const AUTOROTATE_SPEED = 1.0;
+  const RESUME_DELAY = 1200;
+  const RESUME_RAMP = AUTOROTATE_SPEED / 90;
+  let resumeAt = null;
 
   controls.autoRotate = true;
   controls.autoRotateSpeed = AUTOROTATE_SPEED;
   controls.addEventListener('start', () => {
     controls.autoRotate = false;
-    resumeAt = null; // l'utente ha ripreso in mano: annulla la ripresa in attesa
+    resumeAt = null;
   });
   controls.addEventListener('end', () => {
-    resumeAt = performance.now() + RESUME_DELAY; // programma la ripresa graduale
+    resumeAt = performance.now() + RESUME_DELAY;
   });
 
   function updateAutoRotate() {
     if (resumeAt === null || performance.now() < resumeAt) return;
     if (!controls.autoRotate) {
       controls.autoRotate = true;
-      controls.autoRotateSpeed = 0; // riparte da fermo e accelera piano
+      controls.autoRotateSpeed = 0;
     }
     if (controls.autoRotateSpeed < AUTOROTATE_SPEED) {
       controls.autoRotateSpeed = Math.min(AUTOROTATE_SPEED, controls.autoRotateSpeed + RESUME_RAMP);
     } else {
-      resumeAt = null; // ripresa completata
+      resumeAt = null;
     }
   }
-
-  // Luci: l'environment dà l'ambiente; key light direzionale per l'ombra
-  // (intensità moderata + luce ambiente più alta = ombre di contatto morbide,
-  // non macchie scure nette come con un key light forte e poco fill).
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x404040, 0.55));
-
-  const key = new THREE.DirectionalLight(0xffffff, 1.15);
-  key.position.set(4, 6, 4);
-  key.castShadow = true;
-  key.shadow.mapSize.set(1024, 1024);
-  key.shadow.radius = 4; // sfoca i bordi dell'ombra (PCFSoftShadowMap)
-  key.shadow.camera.near = 1;
-  key.shadow.camera.far = 20;
-  key.shadow.camera.left = -4;
-  key.shadow.camera.right = 4;
-  key.shadow.camera.top = 4;
-  key.shadow.camera.bottom = -4;
-  scene.add(key);
-
-  const fill = new THREE.DirectionalLight(0xffffff, 0.45);
-  fill.position.set(-4, 2, -2);
-  scene.add(fill);
-
-  // Piano che riceve solo l'ombra (trasparente). Leggermente sotto lo zero:
-  // così un modello con la base non perfettamente a y=0 (piccoli errori di
-  // allineamento) non "affonda" nel piano, cosa che taglierebbe l'ombra a
-  // metà oggetto invece di mostrarla sotto.
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(40, 40),
-    new THREE.ShadowMaterial({ opacity: 0.13 })
-  );
-  ground.position.y = -0.03;
-  ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
-  scene.add(ground);
 
   function resize() {
     const parent = canvas.parentElement;
@@ -124,17 +125,15 @@ export function createScene(canvas) {
     lastH = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    applyViewOffset(); // aggiorna anche la projection matrix
+    applyViewOffset();
   }
 
-  // ResizeObserver sul contenitore: reagisce anche ai cambi di layout del tema
-  // (editor Shopify, sidebar, ecc.), non solo al resize della finestra.
   const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(resize) : null;
   if (ro && canvas.parentElement) ro.observe(canvas.parentElement);
   window.addEventListener('resize', resize);
   resize();
 
-  // Pausa il rendering quando il canvas esce dal viewport (pagine lunghe del negozio).
+  // Pausa il rendering quando il canvas esce dal viewport.
   let inView = true;
   const io = typeof IntersectionObserver !== 'undefined'
     ? new IntersectionObserver((entries) => {
@@ -148,6 +147,10 @@ export function createScene(canvas) {
     if (!running) return;
     requestAnimationFrame(animate);
     if (!inView) return;
+    if (shadowDirty && subject) {
+      shadow.update(scene);
+      shadowDirty = false;
+    }
     updateAutoRotate();
     controls.update();
     renderer.render(scene, camera);
@@ -160,9 +163,21 @@ export function createScene(canvas) {
     renderer,
     controls,
     resize,
+    // Oggetto principale da inquadrare e su cui calcolare l'ombra.
+    setSubject(object) {
+      subject = object;
+      frame(object);
+    },
+    // Da chiamare quando cambia la geometria visibile (modello/modalità).
+    invalidateShadow() {
+      shadowDirty = true;
+    },
     setSidePanelWidth(px) {
+      const changed = Math.abs(px - sidePanelPx) > 1;
       sidePanelPx = px;
       applyViewOffset();
+      // Prima misura del pannello: reinquadra sullo spazio effettivamente libero.
+      if (changed && subject) frame(subject);
     },
     dispose() {
       running = false;
@@ -170,8 +185,8 @@ export function createScene(canvas) {
       if (ro) ro.disconnect();
       if (io) io.disconnect();
       controls.dispose();
+      shadow.dispose();
       envTex.dispose();
-      pmrem.dispose();
       renderer.dispose();
     },
   };
